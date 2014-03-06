@@ -59,7 +59,7 @@ import java.util.List;
 public class RecentPanelView {
 
     private static final String TAG = "RecentPanelView";
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private static final int DISPLAY_TASKS = 20;
     public static final int MAX_TASKS = DISPLAY_TASKS + 1; // allow extra for non-apps
@@ -339,10 +339,8 @@ public class RecentPanelView {
      * Load all tasks we want.
      */
     protected void loadTasks() {
-        if (isTasksLoaded()) {
-            return;
-        }
         if (DEBUG) Log.v(TAG, "loading tasks");
+        mTasksLoaded = false;
         updateExpandedTaskStates();
         mTasks.clear();
 
@@ -523,12 +521,8 @@ public class RecentPanelView {
     protected void setCancelledByUser(boolean cancelled) {
         mCancelledByUser = cancelled;
         if (cancelled) {
-            setTasksLoaded(false);
+            mTasksLoaded = false;
         }
-    }
-
-    protected void setTasksLoaded(boolean loaded) {
-        mTasksLoaded = loaded;
     }
 
     protected boolean isCancelledByUser() {
@@ -544,7 +538,7 @@ public class RecentPanelView {
      */
     private void tasksLoaded() {
         if (mOnTasksLoadedListener != null) {
-            setTasksLoaded(true);
+            mTasksLoaded = true;
             mOnTasksLoadedListener.onTasksLoaded();
         }
     }
@@ -555,6 +549,7 @@ public class RecentPanelView {
     private void exit() {
         if (mOnExitListener != null) {
             mOnExitListener.onExit();
+            mTasksLoaded = false;
         }
     }
 
